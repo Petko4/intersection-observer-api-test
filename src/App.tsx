@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useRef, useState } from "react";
+import "./App.css";
+import useOnScreen from "./useOnScreen";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLElement>(null);
+  const isIntersecting = useOnScreen(ref);
+  // const [isIntersecting, setIsIntersecting] = useState(false);
+
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(([entry]) =>
+  //     setIsIntersecting(entry.isIntersecting)
+  //   );
+  //   if (ref.current) {
+  //     observer.observe(ref.current);
+  //   }
+
+  //   return () => observer.disconnect();
+  // }, []);
+
+  useEffect(() => {
+    if (isIntersecting) {
+      ref.current?.querySelectorAll("div").forEach((el) => {
+        el.classList.add("slide-in");
+      });
+    } else {
+      ref.current?.querySelectorAll("div").forEach((el) => {
+        el.classList.remove("slide-in");
+      });
+    }
+  }, [isIntersecting]);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      <header>This is the Header</header>
+      <main ref={ref}>
+        <div className="child-one">Child One</div>
+        <div className="child-two">Child Two</div>
+      </main>
+      <footer>This is the Footer</footer>
+    </div>
+  );
 }
 
-export default App
+export default App;
